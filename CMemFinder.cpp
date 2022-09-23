@@ -12,20 +12,20 @@ CMemFinder::~CMemFinder()
 
 BOOL CMemFinder::CompareAPage(DWORD dwBaseAddr, DWORD dwValue)
 {
-	//�ȶ�ȡһҳ���ڴ�
+	//先读取一页的内存
 	BYTE arBytes[4096];
 	if (!::ReadProcessMemory(this->m_hProcess, (LPVOID)dwBaseAddr, arBytes, 4096, NULL))
-		return FALSE; //��ȡ��ҳʧ��
-	//����һҳ�ڴ��в���
+		return FALSE; //读取此页失败
+	//在这一页内存中查找
 	DWORD* pdw;
 	for (int i = 0; i < (int)4 * 1024 - 3; i++)
 	{
 		pdw = (DWORD*)&arBytes[i];
-		if (pdw[0] == dwValue) //����Ҫ���ҵ�ֵ
+		if (pdw[0] == dwValue) //等于要查找的值
 		{
 			if (this->m_nListCnt >= 1024)
 				return FALSE;
-			//���ӵ�ȫ�ֱ�����
+			//添加到全局变量中
 			this->m_arList[this->m_nListCnt++] = dwBaseAddr + i;
 		}
 	}
@@ -33,35 +33,36 @@ BOOL CMemFinder::CompareAPage(DWORD dwBaseAddr, DWORD dwValue)
 
 BOOL CMemFinder::FindFirst(DWORD dwValue)
 {
-	const DWORD dwOneGB = 1024 * 1024 * 1024; //1GB��С
-	const DWORD dwOnePage = 4 * 1024; //4KB��С
+	const DWORD dwOneGB = 1024 * 1024 * 1024; //1GB大小
+	const DWORD dwOnePage = 4 * 1024; //4KB大小
 
 
 	if (this->m_hProcess == NULL)
 	{
 		return FALSE;
 	}
-	//����Ĭ��ϵͳΪwindows10���Ժ��x64ϵͳ,������ʼ��ַ
+	//这里默认系统为windows10与以后的x64系统,决定开始地址
 	DWORD dwBase;
 	dwBase = 64 * 1024;
-	//�ڿ�ʼ��ַ��2gb�ĵ�ַ�ռ��в���
+		//在开始地址到2gb的地址空间中查找,如果是要修改x64程序内存修改器需要另外修改.
 	for (; dwBase < 2 * dwOneGB; dwBase += dwOnePage)
 	{
-		//�Ƚ�һҳ��С���ڴ�
+		//比较一页大小的内存
 		CompareAPage(dwBase, dwValue);
 	}
+		this->m_bFirst = TRUE;
 	return TRUE;
 }
 
-//ShowList�����������[]���غ�����ʾ
+//ShowList函数可用类的[]重载函数表示
 
 BOOL CMemFinder::FindNext(DWORD dwValue)
 {
-	//����m_arList��������Ч��ַ�ĸ���,��ʼ���µ�m_nListCntֵ
+	//保存m_arList数组中有效地址的个数,初始化新的m_nListCnt值
 	int nOrgCnt = this->m_nListCnt;
 	this->m_nListCnt = 0;
 
-	//��m_arList�����¼�ĵ�ַ�в���
+	//在m_arList数组记录的地址中查找
 	BOOL bRet = FALSE;
 	DWORD dwReadValue;
 	for (int i = 0; i < nOrgCnt; i++)
