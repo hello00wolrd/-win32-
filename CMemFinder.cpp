@@ -4,7 +4,10 @@ CMemFinder::CMemFinder(DWORD dwProcessId)
 {
 	this->m_ProcessId = dwProcessId;
 	this->m_hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->m_ProcessId);
+	this->m_bFirst = FALSE;
+	this->m_nListCnt = 0;
 }
+
 CMemFinder::~CMemFinder()
 {
 	CloseHandle(m_hProcess);
@@ -44,13 +47,13 @@ BOOL CMemFinder::FindFirst(DWORD dwValue)
 	//这里默认系统为windows10与以后的x64系统,决定开始地址
 	DWORD dwBase;
 	dwBase = 64 * 1024;
-		//在开始地址到2gb的地址空间中查找,如果是要修改x64程序内存修改器需要另外修改.
+	//在开始地址到2gb的地址空间中查找,如果是要修改x64程序内存修改器需要另外修改
 	for (; dwBase < 2 * dwOneGB; dwBase += dwOnePage)
 	{
 		//比较一页大小的内存
 		CompareAPage(dwBase, dwValue);
 	}
-		this->m_bFirst = TRUE;
+	this->m_bFirst = TRUE;
 	return TRUE;
 }
 
