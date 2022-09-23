@@ -3,24 +3,24 @@
 //
 // int main(int __argc, char* __argv)
 // {
-// 	//»ñµÃÄ¿±ê½ø³Ì¾ä±ú
+// 	//è·å¾—ç›®æ ‡è¿›ç¨‹å¥æŸ„
 // 	DWORD dwId;
 // 	std::cin >> dwId;
 // 	CMemFinder Cmemfinder1 = CMemFinder(dwId);
-// 	//ÊäÈëÒªĞŞ¸ÄµÄÖµ
+// 	//è¾“å…¥è¦ä¿®æ”¹çš„å€¼
 // 	int iVal;
 // 	printf_s("Input val = ");
 // 	scanf_s("%d", &iVal);
 //
-// 	//½øĞĞµÚÒ»´Î²éÕÒ
+// 	//è¿›è¡Œç¬¬ä¸€æ¬¡æŸ¥æ‰¾
 // 	Cmemfinder1.FindFirst(iVal);
-// 	//²éÑé½á¹û
+// 	//æŸ¥éªŒç»“æœ
 // 	int i = Cmemfinder1.GetListCount();
 // 	while (i > 1)
 // 	{
 // 		printf_s("now the list have %d members, Input val = ",i);
 // 		scanf_s("%d", &iVal);
-// 		//½øĞĞÏÂ´ÎËÑË÷
+// 		//è¿›è¡Œä¸‹æ¬¡æœç´¢
 // 		Cmemfinder1.FindNext(iVal);
 // 		i = Cmemfinder1.GetListCount();
 // 	}
@@ -28,4 +28,6 @@
 // 	scanf_s("%d", &iVal);
 // 	if (Cmemfinder1.WriteMemory(Cmemfinder1[0], iVal))
 // 		printf_s("Write data success \n");
+//   getchar();
+// return 0;
 // }
